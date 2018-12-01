@@ -15,6 +15,7 @@ var db *sql.DB
 const theCase string = "lower"
 
 func main() {
+	initDB()
 	router := gin.Default()
 
 	api := router.Group("/api")
@@ -25,7 +26,7 @@ func main() {
 		api.PUT("/:node/:id", updateResource)
 		api.DELETE("/:node/:id", deleteResource)
 	}
-
+	router.GET("/", createResource)
 	router.Run()
 }
 
@@ -68,6 +69,8 @@ func getResourceDetils(c *gin.Context) {
 }
 func createResource(c *gin.Context) {
 	node := c.Param("node")
+
+	// mengambil profile table
 	query := "SHOW COLUMNS FROM " + node
 	resources, err := gosqljson.QueryDbToMap(db, theCase, query)
 	if err != nil {

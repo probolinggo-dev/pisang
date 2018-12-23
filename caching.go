@@ -16,8 +16,7 @@ type kuki struct {
 var kukis map[string]kuki
 
 func runquery(con *sql.DB, interval float64, query string, params ...interface{}) ([]map[string]string, error) {
-	val, ok := kukis[query]
-	if ok {
+	if val, ok := kukis[query]; ok {
 		elapsed := time.Since(val.updatedAt)
 		if elapsed.Seconds() < val.interval {
 			return val.value, nil

@@ -16,6 +16,7 @@ import (
 var db *sql.DB
 
 const theCase string = "lower"
+const TIME_TO_CACHE float64 = 60
 
 func main() {
 	initDB()
@@ -49,7 +50,7 @@ func initDB() {
 func getResources(c *gin.Context) {
 	node := c.Param("node")
 	query := fmt.Sprintf("select * from %s", node)
-	resources, err := gosqljson.QueryDbToMap(db, theCase, query)
+	resources, err := runquery(db, TIME_TO_CACHE, query)
 	if err != nil {
 		c.JSON(http.StatusNotFound, err)
 		return
@@ -62,7 +63,8 @@ func getResourceDetils(c *gin.Context) {
 	node := c.Param("node")
 	id := c.Param("id")
 	query := fmt.Sprintf("select * from %s where id = '%s'", node, id)
-	resources, err := gosqljson.QueryDbToMap(db, theCase, query)
+	// resources, err := gosqljson.QueryDbToMap(db, theCase, query)
+	resources, err := runquery(db, TIME_TO_CACHE, query, node, id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, err)
 		return
